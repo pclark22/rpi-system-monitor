@@ -1,13 +1,15 @@
-from pprint import pprint
-
 from system_info import (
     get_hostname,
+    get_model,
     get_os,
     get_release,
     get_cpu_usage,
     get_memory_usage,
     get_disk_usage,
     get_cpu_temperature,
+    get_ip_address,
+    get_uptime,
+    get_current_time,
 )
 
 class SystemMonitor:
@@ -15,18 +17,67 @@ class SystemMonitor:
     def collect(self):
         return {
             "hostname": get_hostname(),
+            "model": get_model(),
             "operating_system": get_os(),
             "release": get_release(),
             "cpu_usage": get_cpu_usage(),
             "memory_usage": get_memory_usage(),
             "disk_usage": get_disk_usage(),
             "cpu_temperature": get_cpu_temperature(),
+            "ip_address": get_ip_address(),
+            "uptime": get_uptime(),
+            "current_time": get_current_time(),
         }
+def bytes_to_gb(bytes_value):
+    return round(bytes_value / (1024 ** 3), 1)
+
+def display_report(system_status):
+    """Display a formatted system status report."""
+
+    print("-" * 40)
+    print("      Raspberry Pi System Monitor")
+    print("-" * 40)
+
+    print(f"{'Hostname':18}: {system_status['hostname']}")
+    print(f"{'Model':18}: {system_status['model']}")
+    print(f"{'Operating System':18}: {system_status['operating_system']}")
+    print(f"{'Kernel':18}: {system_status['release']}")
+
+    print()
+
+    print(f"{'CPU Usage':18}: {system_status['cpu_usage']:.1f}%")
+   
+    memory = system_status["memory_usage"]
+
+    print(
+        f"{'Memory':18}: "
+        f"{bytes_to_gb(memory['used'])} GB / "
+        f"{bytes_to_gb(memory['total'])} GB "
+        f"({memory['percent']:.1f}%)"
+    )
+
+    disk = system_status["disk_usage"]
+
+    print(
+        f"{'Disk':18}: "
+        f"{bytes_to_gb(disk['used'])} GB / "
+        f"{bytes_to_gb(disk['total'])} GB "
+        f"({disk['percent']:.1f}%)"
+    )
+    print(f"{'CPU Temperature':18}: {system_status['cpu_temperature']:.1f} °C")
+
+    print()
+
+    print(f"{'IP Address':18}: {system_status['ip_address']}")
+    print(f"{'Uptime':18}: {system_status['uptime']}")
+    print(f"{'Current Time':18}: {system_status['current_time']}")
+
+    print("-" * 40)
 
 def main():
     monitor = SystemMonitor()
     system_status = monitor.collect()
-    pprint(system_status, sort_dicts=False)
+    display_report(system_status)
 
 if __name__ == "__main__":
     main()
