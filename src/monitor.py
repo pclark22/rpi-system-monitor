@@ -7,6 +7,7 @@ from system_info import (
     get_cpu_usage,
     get_memory_usage,
     get_disk_usage,
+    get_cpu_temperature,
 )
 
 class SystemMonitor:
@@ -19,6 +20,7 @@ class SystemMonitor:
             "cpu_usage": get_cpu_usage(),
             "memory_usage": get_memory_usage(),
             "disk_usage": get_disk_usage(),
+            "cpu_temperature": get_cpu_temperature(),
         }
 
 def main():
