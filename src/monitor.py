@@ -1,6 +1,7 @@
 import time
 import argparse
 import subprocess
+import json
 
 from system_info import (
     get_hostname,
@@ -99,7 +100,16 @@ def parse_arguments():
         help="Refresh interval in seconds"
     )
 
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Display output as JSON"
+    )
+
     return parser.parse_args()
+
+def display_json(system_status):
+    print(json.dumps(system_status, indent=4))
 
 def main():
 
@@ -122,7 +132,11 @@ def main():
 
     else:
         system_status = monitor.collect()
-        display_report(system_status)
+
+        if args.json:
+            display_json(system_status)
+        else:
+            display_report(system_status)
 
 if __name__ == "__main__":
     main()

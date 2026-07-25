@@ -9,7 +9,7 @@ def get_hostname():
 def get_model():
     try:
         with open("/proc/device-tree/model", "r") as file:
-            return file.read().strip()
+            return file.read().replace("\x00", "").strip()
     except OSError:
         return "Unavailable"
 
@@ -43,7 +43,7 @@ def get_disk_usage():
 def get_cpu_temperature():
     with open("/sys/class/thermal/thermal_zone0/temp", "r") as file:
         temperature = int(file.read()) / 1000
-    return temperature
+    return round(temperature, 1)
 
 def get_ip_address():
     try:
@@ -62,7 +62,7 @@ def get_uptime():
         return "Unavailable"
 
 def get_current_time():
-    return datetime.now().strftime("%Y/%m/%d, %H:%M:%S")
+    return datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 def main():
     print(f"Hostname: {get_hostname()}")
