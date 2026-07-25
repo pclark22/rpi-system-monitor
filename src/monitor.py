@@ -1,3 +1,7 @@
+import time
+import argparse
+import subprocess
+
 from system_info import (
     get_hostname,
     get_model,
@@ -74,10 +78,51 @@ def display_report(system_status):
 
     print("-" * 40)
 
+def clear_screen():
+    subprocess.run(["clear"])
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Raspberry Pi System Monitor"
+    )
+
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        help="Continuously monitor system status"
+    )
+
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=5,
+        help="Refresh interval in seconds"
+    )
+
+    return parser.parse_args()
+
 def main():
+
+    args = parse_arguments()
     monitor = SystemMonitor()
-    system_status = monitor.collect()
-    display_report(system_status)
+
+    if args.watch:
+        try:
+            while True:
+                clear_screen()
+
+                system_status = monitor.collect()
+                display_report(system_status)
+
+                print(f"\nRefreshing every {args.interval} seconds...")
+                time.sleep(args.interval)
+
+        except KeyboardInterrupt:
+            print("\nMonitoring stopped.")
+
+    else:
+        system_status = monitor.collect()
+        display_report(system_status)
 
 if __name__ == "__main__":
     main()
