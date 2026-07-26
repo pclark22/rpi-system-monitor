@@ -19,16 +19,31 @@ from system_info import (
 
 class SystemMonitor:
 
-    def collect(self):
+    def cpu(self):
+        return {
+            "cpu_usage": get_cpu_usage(),
+            "cpu_temperature": get_cpu_temperature(),
+        }
+
+    def memory(self):
+        return {
+            "memory_usage": get_memory_usage(),
+        }
+
+    def disk(self):
+        return {
+            "disk_usage": get_disk_usage(),
+        }
+
+    def system(self):
         return {
             "hostname": get_hostname(),
             "model": get_model(),
             "operating_system": get_os(),
             "release": get_release(),
-            "cpu_usage": get_cpu_usage(),
-            "memory_usage": get_memory_usage(),
-            "disk_usage": get_disk_usage(),
-            "cpu_temperature": get_cpu_temperature(),
+            **self.cpu(),
+            **self.memory(),
+            **self.disk(),
             "ip_address": get_ip_address(),
             "uptime": get_uptime(),
             "current_time": get_current_time(),
@@ -131,7 +146,7 @@ def main():
             print("\nMonitoring stopped.")
 
     else:
-        system_status = monitor.collect()
+        system_status = monitor.system()
 
         if args.json:
             display_json(system_status)
