@@ -64,6 +64,19 @@ def get_uptime():
 def get_current_time():
     return datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
+def get_mac_address():
+    interfaces = psutil.net_if_addrs()
+
+    for interface, addresses in interfaces.items():
+        for address in addresses:
+            if address.family == psutil.AF_LINK:
+                return address.address
+
+    return "unknown"
+
+def get_network_interfaces():
+    return list(psutil.net_if_addrs().keys())
+
 def main():
     print(f"Hostname: {get_hostname()}")
     print(f"Model: {get_model()}")
@@ -76,6 +89,8 @@ def main():
     print(f"IP Address: {get_ip_address()}")
     print(f"Uptime: {get_uptime()}")
     print(f"Current Time: {get_current_time()}")
+    print(f"mac address: {get_mac_address()}")
+    print(f"network interfaces: {get_network_interfaces()}")
           
 
 if __name__ == "__main__":

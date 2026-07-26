@@ -15,6 +15,8 @@ from system_info import (
     get_ip_address,
     get_uptime,
     get_current_time,
+    get_mac_address,
+    get_network_interfaces,
 )
 
 class SystemMonitor:
@@ -44,10 +46,22 @@ class SystemMonitor:
             **self.cpu(),
             **self.memory(),
             **self.disk(),
+            **self.network(),
             "ip_address": get_ip_address(),
             "uptime": get_uptime(),
             "current_time": get_current_time(),
+            "mac_address": get_mac_address(),
+            "interfaces": get_network_interfaces(),
         }
+
+    def network(self):
+        return {
+            "hostname": get_hostname(),
+            "ip_address": get_ip_address(),
+            "mac_address": get_mac_address(),
+            "interfaces": get_network_interfaces()
+        }
+
 def bytes_to_gb(bytes_value):
     return round(bytes_value / (1024 ** 3), 1)
 
@@ -89,6 +103,8 @@ def display_report(system_status):
     print()
 
     print(f"{'IP Address':18}: {system_status['ip_address']}")
+    print(f"{'MAC Address':18}: {system_status['mac_address']}")
+    print(f"{'Network Interfaces':18}: {system_status['interfaces']}")
     print(f"{'Uptime':18}: {system_status['uptime']}")
     print(f"{'Current Time':18}: {system_status['current_time']}")
 
@@ -136,7 +152,7 @@ def main():
             while True:
                 clear_screen()
 
-                system_status = monitor.collect()
+                system_status = monitor.system()
                 display_report(system_status)
 
                 print(f"\nRefreshing every {args.interval} seconds...")
