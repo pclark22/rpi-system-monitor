@@ -19,25 +19,30 @@ from system_info import (
     get_network_interfaces,
 )
 
+
 class SystemMonitor:
 
-    def cpu(self):
+    def cpu(self) -> dict:
+        """Return current CPU metrics."""
         return {
             "cpu_usage": get_cpu_usage(),
             "cpu_temperature": get_cpu_temperature(),
         }
 
-    def memory(self):
+    def memory(self) -> dict:
+        """Return current memory metrics."""
         return {
             "memory_usage": get_memory_usage(),
         }
 
-    def disk(self):
+    def disk(self) -> dict:
+        """Return current disk metrics."""
         return {
             "disk_usage": get_disk_usage(),
         }
 
-    def system(self):
+    def system(self) -> dict:
+        """Return all current system metrics."""
         return {
             "hostname": get_hostname(),
             "model": get_model(),
@@ -46,7 +51,6 @@ class SystemMonitor:
             **self.cpu(),
             **self.memory(),
             **self.disk(),
-            **self.network(),
             "ip_address": get_ip_address(),
             "uptime": get_uptime(),
             "current_time": get_current_time(),
@@ -54,7 +58,8 @@ class SystemMonitor:
             "interfaces": get_network_interfaces(),
         }
 
-    def network(self):
+    def network(self) -> dict:
+        """Return current network metrics."""
         return {
             "hostname": get_hostname(),
             "ip_address": get_ip_address(),
@@ -62,7 +67,7 @@ class SystemMonitor:
             "interfaces": get_network_interfaces()
         }
 
-def bytes_to_gb(bytes_value):
+def bytes_to_gb(bytes_value) -> float:
     return round(bytes_value / (1024 ** 3), 1)
 
 def display_report(system_status):
@@ -98,7 +103,13 @@ def display_report(system_status):
         f"{bytes_to_gb(disk['total'])} GB "
         f"({disk['percent']:.1f}%)"
     )
-    print(f"{'CPU Temperature':18}: {system_status['cpu_temperature']:.1f} °C")
+
+    temp = system_status["cpu_temperature"]
+
+    if temp is None:
+        print(f"{'CPU Temperature':18}: Unavailable")
+    else:
+        print(f"{'CPU Temperature':18}: {temp:.1f} °C")
 
     print()
 
@@ -110,7 +121,7 @@ def display_report(system_status):
 
     print("-" * 40)
 
-def clear_screen():
+def clear_screen() -> None:
     subprocess.run(["clear"])
 
 def parse_arguments():
@@ -139,10 +150,10 @@ def parse_arguments():
 
     return parser.parse_args()
 
-def display_json(system_status):
+def display_json(system_status: dict) -> None:
     print(json.dumps(system_status, indent=4))
 
-def main():
+def main() -> None:
 
     args = parse_arguments()
     monitor = SystemMonitor()
